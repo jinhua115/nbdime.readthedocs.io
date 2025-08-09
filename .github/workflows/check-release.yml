@@ -1,0 +1,26 @@
+name: Check Release
+on:
+  push:
+    branches: ["master", "*"]
+  pull_request:
+    branches: ["*"]
+
+jobs:
+  check_release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Base Setup
+        uses: jupyterlab/maintainer-tools/.github/actions/base-setup@v1
+      - name: Check Release
+        uses: fcollonval/jupyter_releaser/.github/actions/check-release@1e5300b94b842e61d4f10bed0db8e855c8fe9108
+        env:
+          RH_TAG_FORMAT: "{version}"
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload Distributions
+        uses: actions/upload-artifact@v3
+        with:
+          name: nbdime-releaser-dist-${{ '{{ github.run_number }}' }}
+          path: .jupyter_releaser_checkout/dist
